@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace AngularEnterpriseAPI.Models.Entities
 {
@@ -20,5 +21,6 @@ namespace AngularEnterpriseAPI.Models.Entities
 
         // Navigation
         public virtual ICollection<UserRoleAssignment> UserRoleAssignments { get; set; } = new List<UserRoleAssignment>();
+        public virtual ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
     }
 }

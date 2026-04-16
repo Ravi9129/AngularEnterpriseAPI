@@ -35,6 +35,9 @@ namespace AngularEnterpriseAPI.Mappings
 
             // Role mappings
             CreateMap<AngularEnterpriseAPI.Models.Entities.Role, AngularEnterpriseAPI.DTOs.Role.RoleResponseDto>();
+
+            // Permission mappings
+            CreateMap<AngularEnterpriseAPI.Models.Entities.Permission, AngularEnterpriseAPI.DTOs.Permission.PermissionResponseDto>();
         }
 
         private string GetIconForActivityType(string activityType)

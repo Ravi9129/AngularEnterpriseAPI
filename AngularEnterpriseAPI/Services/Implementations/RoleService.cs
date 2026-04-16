@@ -43,7 +43,8 @@ namespace AngularEnterpriseAPI.Services.Implementations
             if (role == null)
                 throw new KeyNotFoundException("Role not found");
 
-            await _userRoleRepository.AssignRoleToUserAsync(dto.UserId, role.Id);
+            var userId = dto.UserId ?? throw new ArgumentException("UserId is required to assign role to user");
+            await _userRoleRepository.AssignRoleToUserAsync(userId, role.Id);
             return true;
         }
 
@@ -53,7 +54,8 @@ namespace AngularEnterpriseAPI.Services.Implementations
             if (role == null)
                 return false;
 
-            return await _userRoleRepository.RemoveRoleFromUserAsync(dto.UserId, role.Id);
+            var userId = dto.UserId ?? throw new ArgumentException("UserId is required to remove role from user");
+            return await _userRoleRepository.RemoveRoleFromUserAsync(userId, role.Id);
         }
 
         public async Task<IEnumerable<string>> GetRolesForUserAsync(int userId)

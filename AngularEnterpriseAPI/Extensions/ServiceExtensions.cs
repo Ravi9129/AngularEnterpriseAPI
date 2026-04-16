@@ -44,6 +44,8 @@ namespace AngularEnterpriseAPI.Extensions
             services.AddScoped<IActivityService, ActivityService>();
             services.AddScoped<IPasswordResetService, PasswordResetService>();
             services.AddScoped<IEmailService, EmailService>();
+            // Permissions
+            services.AddScoped<IPermissionService, PermissionService>();
 
             return services;
         }
