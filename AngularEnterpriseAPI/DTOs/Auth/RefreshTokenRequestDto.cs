@@ -1,6 +1,10 @@
-﻿namespace AngularEnterpriseAPI.DTOs.Auth
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace AngularEnterpriseAPI.DTOs.Auth
 {
     public class RefreshTokenRequestDto
     {
+        [Required]
+        public string RefreshToken { get; set; } = string.Empty;
     }
 }

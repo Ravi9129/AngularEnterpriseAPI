@@ -1,9 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using AngularEnterpriseAPI.Models.Enums;
 
 namespace AngularEnterpriseAPI.DTOs.User
 {
-    public class UpdateUserDto
+    public class UpdateProfileDto
     {
         [MinLength(2)]
         [MaxLength(50)]
@@ -16,7 +15,5 @@ namespace AngularEnterpriseAPI.DTOs.User
         [EmailAddress]
         [MaxLength(100)]
         public string? Email { get; set; }
-
-        public UserRole? Role { get; set; }
     }
 }
