@@ -1,4 +1,5 @@
 ﻿using AngularEnterpriseAPI.DTOs.Common;
+using AngularEnterpriseAPI.DTOs.PasswordReset;
 using AngularEnterpriseAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +20,7 @@ namespace AngularEnterpriseAPI.Controllers
         }
 
         [HttpPost("forgot-password")]
-        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestDto request)
         {
             try
             {
@@ -34,7 +35,7 @@ namespace AngularEnterpriseAPI.Controllers
         }
 
         [HttpPost("reset-password")]
-        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequestDto request)
         {
             try
             {
@@ -53,7 +54,7 @@ namespace AngularEnterpriseAPI.Controllers
         }
 
         [HttpPost("validate-token")]
-        public async Task<IActionResult> ValidateToken([FromBody] ValidateTokenRequest request)
+        public async Task<IActionResult> ValidateToken([FromBody] ValidateTokenRequestDto request)
         {
             try
             {
@@ -66,21 +67,5 @@ namespace AngularEnterpriseAPI.Controllers
                 return StatusCode(500, ApiResponse<object>.ErrorResponse("An error occurred while validating token", 500));
             }
         }
-    }
-
-    public class ForgotPasswordRequest
-    {
-        public string Email { get; set; } = string.Empty;
-    }
-
-    public class ResetPasswordRequest
-    {
-        public string Token { get; set; } = string.Empty;
-        public string NewPassword { get; set; } = string.Empty;
-    }
-
-    public class ValidateTokenRequest
-    {
-        public string Token { get; set; } = string.Empty;
     }
 }

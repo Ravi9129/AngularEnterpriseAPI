@@ -20,6 +20,30 @@ namespace AngularEnterpriseAPI.Controllers
             _logger = logger;
         }
 
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] AngularEnterpriseAPI.DTOs.User.CreateUserDto request)
+        {
+            try
+            {
+                var ipAddress = GetIpAddress();
+                var result = await _authService.RegisterAsync(request, ipAddress);
+
+                return Ok(ApiResponse<LoginResponseDto>.SuccessResponse(
+                    result,
+                    "Registration successful",
+                    201));
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(ApiResponse<object>.ErrorResponse(ex.Message, 409));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during registration");
+                return StatusCode(500, ApiResponse<object>.ErrorResponse("An error occurred during registration", 500));
+            }
+        }
+
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequestDto request)
         {
@@ -88,7 +112,7 @@ namespace AngularEnterpriseAPI.Controllers
 
         [Authorize]
         [HttpPost("change-password")]
-        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequestDto request)
         {
             try
             {
@@ -115,11 +139,5 @@ namespace AngularEnterpriseAPI.Controllers
 
             return HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "0.0.0.0";
         }
-    }
-
-    public class ChangePasswordRequest
-    {
-        public string CurrentPassword { get; set; } = string.Empty;
-        public string NewPassword { get; set; } = string.Empty;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AngularEnterpriseAPI.DTOs.User;
 using AngularEnterpriseAPI.DTOs.Activity;
+using AngularEnterpriseAPI.DTOs.PasswordReset;
 using System;
 using AngularEnterpriseAPI.Models.Entities;
 using AutoMapper;
@@ -31,6 +32,9 @@ namespace AngularEnterpriseAPI.Mappings
 
             // Password Reset mappings
             CreateMap<PasswordResetToken, PasswordResetTokenDto>();
+
+            // Role mappings
+            CreateMap<AngularEnterpriseAPI.Models.Entities.Role, AngularEnterpriseAPI.DTOs.Role.RoleResponseDto>();
         }
 
         private string GetIconForActivityType(string activityType)
@@ -46,12 +50,5 @@ namespace AngularEnterpriseAPI.Mappings
                 _ => "info"
             };
         }
-    }
-
-    public class PasswordResetTokenDto
-    {
-        public string Token { get; set; } = string.Empty;
-        public DateTime ExpiryDate { get; set; }
-        public bool IsValid { get; set; }
     }
 }

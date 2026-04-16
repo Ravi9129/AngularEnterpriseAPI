@@ -22,6 +22,32 @@ namespace AngularEnterpriseAPI.Services.Implementations
             _mapper = mapper;
         }
 
+        public async Task<LoginResponseDto> RegisterAsync(AngularEnterpriseAPI.DTOs.User.CreateUserDto request, string ipAddress)
+        {
+            // Check if user exists
+            var exists = await _userRepository.ExistsAsync(u => u.Username == request.Username || u.Email == request.Email);
+            if (exists)
+                throw new InvalidOperationException("Username or email already exists");
+
+            var user = _mapper.Map<AngularEnterpriseAPI.Models.Entities.User>(request);
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
+            user.CreatedAt = DateTime.UtcNow;
+            user.IsActive = true;
+
+            var created = await _userRepository.AddAsync(user);
+
+            // Generate tokens
+            var accessToken = _tokenService.GenerateAccessToken(created);
+            var refreshToken = await _tokenService.GenerateRefreshTokenAsync(created, ipAddress);
+
+            return new LoginResponseDto
+            {
+                AccessToken = accessToken,
+                RefreshToken = refreshToken,
+                User = _mapper.Map<UserResponseDto>(created)
+            };
+        }
+
         public async Task<LoginResponseDto> LoginAsync(LoginRequestDto request, string ipAddress)
         {
             // Find user by username

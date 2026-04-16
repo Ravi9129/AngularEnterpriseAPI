@@ -13,6 +13,8 @@ namespace AngularEnterpriseAPI.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<UserRoleAssignment> UserRoleAssignments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -24,9 +26,10 @@ namespace AngularEnterpriseAPI.Data
                 entity.HasIndex(u => u.Username).IsUnique();
                 entity.HasIndex(u => u.Email).IsUnique();
 
+                // keep existing enum property mapping
                 entity.Property(u => u.Role)
                     .HasConversion<int>()
-                    .HasDefaultValue(UserRole.USER);
+                    .HasDefaultValue(Models.Enums.UserRole.USER);
             });
 
             // RefreshToken configuration
@@ -55,7 +58,7 @@ namespace AngularEnterpriseAPI.Data
                 FirstName = "System",
                 LastName = "Administrator",
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123"),
-                Role = UserRole.ADMIN,
+                Role = Models.Enums.UserRole.ADMIN,
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow
             };
@@ -81,12 +84,26 @@ namespace AngularEnterpriseAPI.Data
                 FirstName = "Jane",
                 LastName = "Manager",
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword("Manager@123"),
-                Role = UserRole.MANAGER,
+                Role = Models.Enums.UserRole.MANAGER,
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow
             };
 
             modelBuilder.Entity<User>().HasData(adminUser, regularUser, managerUser);
+
+            // Seed base roles
+            var roleAdmin = new Role { Id = 1, Name = "ADMIN", Description = "Administrator role", IsActive = true, CreatedAt = DateTime.UtcNow };
+            var roleUser = new Role { Id = 2, Name = "USER", Description = "Default user role", IsActive = true, CreatedAt = DateTime.UtcNow };
+            var roleManager = new Role { Id = 3, Name = "MANAGER", Description = "Manager role", IsActive = true, CreatedAt = DateTime.UtcNow };
+
+            modelBuilder.Entity<Role>().HasData(roleAdmin, roleUser, roleManager);
+
+            // Seed assignments linking seeded users to roles
+            modelBuilder.Entity<UserRoleAssignment>().HasData(
+                new UserRoleAssignment { Id = 1, UserId = 1, RoleId = 1, AssignedAt = DateTime.UtcNow }, // admin
+                new UserRoleAssignment { Id = 2, UserId = 2, RoleId = 2, AssignedAt = DateTime.UtcNow }, // john.doe -> USER
+                new UserRoleAssignment { Id = 3, UserId = 3, RoleId = 3, AssignedAt = DateTime.UtcNow }  // jane.manager -> MANAGER
+            );
         }
     }
 }

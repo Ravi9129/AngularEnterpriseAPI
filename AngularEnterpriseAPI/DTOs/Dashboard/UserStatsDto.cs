@@ -8,6 +8,6 @@
         public int AdminCount { get; set; }
         public int ManagerCount { get; set; }
         public int RegularUserCount { get; set; }
-        public double UserGrowthPercentage { get; set; }
+        public double UserGrowthPercentage { get; set; } = 0;
     }
 }

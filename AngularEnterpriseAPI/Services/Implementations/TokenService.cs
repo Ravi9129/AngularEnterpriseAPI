@@ -15,11 +15,13 @@ namespace AngularEnterpriseAPI.Services.Implementations
     {
         private readonly JwtSettings _jwtSettings;
         private readonly IRefreshTokenRepository _refreshTokenRepository;
+        private readonly IRoleService _roleService;
 
-        public TokenService(IOptions<JwtSettings> jwtSettings, IRefreshTokenRepository refreshTokenRepository)
+        public TokenService(IOptions<JwtSettings> jwtSettings, IRefreshTokenRepository refreshTokenRepository, IRoleService roleService)
         {
             _jwtSettings = jwtSettings.Value;
             _refreshTokenRepository = refreshTokenRepository;
+            _roleService = roleService;
         }
 
         public string GenerateAccessToken(User user)
@@ -42,6 +44,24 @@ namespace AngularEnterpriseAPI.Services.Implementations
                 new Claim("lastName", user.LastName),
                 new Claim("role", user.Role.ToString())
             };
+
+            // include dynamic roles assigned to the user
+            try
+            {
+                var rolesTask = _roleService?.GetRolesForUserAsync(user.Id);
+                if (rolesTask != null)
+                {
+                    var roles = rolesTask.GetAwaiter().GetResult();
+                    foreach (var r in roles)
+                    {
+                        claims.Add(new Claim(ClaimTypes.Role, r));
+                    }
+                }
+            }
+            catch
+            {
+                // ignore role lookup failures for token issuance
+            }
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
